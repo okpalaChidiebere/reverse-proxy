@@ -1,10 +1,21 @@
 language: minimal
+
 services: docker
-before_install:
-  - docker -v 
-  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin # set Docker username and password in Travis console
-  - echo 'dockerhub credentials configured'
+
+# Pre-testing installs
 install:
+    - echo "nothing needs to be installed"
+    
+# Scripts to be run such as tests
+before_script:
+    - echo "no tests"
+  
+script:
+  - docker --version # print the version for logging
   - docker build -t simple-reverse-proxy .
   - docker tag simple-reverse-proxy aluminetchidiebre/simple-reverse-proxy:latest
-  - docker push "$DOCKER_USERNAME"/simple-node-travis
+  
+  # Tasks to perform after the process is successful. Formatting the Docker username and password as below enables you to programmatically log in without having the password exposed in logs.
+after_success:
+    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+    - docker push "$DOCKER_USERNAME"/simple-reverse-proxy
