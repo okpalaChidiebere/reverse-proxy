@@ -1,0 +1,10 @@
+language: minimal
+services: docker
+before_install:
+  - docker -v 
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin # set Docker username and password in Travis console
+  - echo 'dockerhub credentials configured'
+install:
+  - docker build -t simple-reverse-proxy .
+  - docker tag simple-reverse-proxy aluminetchidiebre/simple-reverse-proxy:latest
+  - docker push "$DOCKER_USERNAME"/simple-node-travis
